@@ -1,4 +1,5 @@
 {
 	"db": "ENGLISH_DB",
-	"port": "ENGLISH_PORT"
+	"port": "ENGLISH_PORT",
+	"sessionSecret": "ENGLISH_SESSION_SECRET"
 }

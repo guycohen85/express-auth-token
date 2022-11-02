@@ -1,10 +1,9 @@
-const debug = require('debug')('app:router');
 var express = require('express');
 var router = express.Router();
+const User = require('../models/user');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  debug('booting');
+router.get('/', async function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
