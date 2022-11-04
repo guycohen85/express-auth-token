@@ -1,4 +1,5 @@
 const logger = require('../utils/logger');
+const { extractErrors } = require('../utils/joi');
 
 module.exports = (app) => {
   app.use(async (err, req, res, next) => {
@@ -7,6 +8,11 @@ module.exports = (app) => {
     // Only providing stack error in development
     if (process.env.NODE_ENV === 'development') {
       error.stack = err.stack;
+    }
+
+    // JOI errors
+    if (err.details) {
+      error.details = extractErrors(err.details);
     }
 
     // Log error
