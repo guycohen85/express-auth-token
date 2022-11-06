@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const { getAccessToken, getRefreshToken } = require('../utils/tokens');
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -34,6 +35,17 @@ UserSchema.statics.validate = (body) => {
   });
 
   return schema.validate(body, { abortEarly: false });
+};
+
+UserSchema.statics.createUser = async function ({ username, email, password }) {
+  const hashPassword = await bcrypt.hash(password, 10);
+  const user = new this({ username, email, password: hashPassword });
+  const accessToken = getAccessToken({ id: user.id, username, email });
+  const refreshToken = getRefreshToken();
+
+  user.refreshToken.push(refreshToken);
+
+  return { user, accessToken };
 };
 
 module.exports = mongoose.model('User', UserSchema);
