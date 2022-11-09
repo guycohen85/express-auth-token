@@ -7,10 +7,16 @@ function getAccessToken(payload) {
   });
 }
 
-function getRefreshToken() {
-  return jwt.sign({}, config.get('jwtSecret'), {
-    expiresIn: '15 days',
+function getUserAccessToken({ id, email, username }) {
+  return jwt.sign({ id, email, username }, config.get('jwtSecret'), {
+    expiresIn: '15m',
   });
 }
 
-module.exports = { getAccessToken, getRefreshToken };
+function getRefreshToken() {
+  return jwt.sign({}, config.get('jwtSecret'), {
+    expiresIn: '7 days',
+  });
+}
+
+module.exports = { getAccessToken, getRefreshToken, getUserAccessToken };

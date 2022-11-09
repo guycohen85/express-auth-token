@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-const { getAccessToken, getRefreshToken } = require('../utils/tokens');
+const { getUserAccessToken, getRefreshToken } = require('../utils/tokens');
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -26,26 +26,44 @@ const UserSchema = new mongoose.Schema({
   refreshToken: [String],
 });
 
-UserSchema.statics.validate = (body) => {
-  const schema = Joi.object({
-    username: Joi.string().alphanum().min(3).max(30).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(3).max(30).required(),
-    repeatPassword: Joi.ref('password'),
-  });
+const loginJoiSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(3).max(30).required(),
+});
 
-  return schema.validate(body, { abortEarly: false });
+// * Static Methods
+UserSchema.statics.validateLogin = (body) => {
+  return loginJoiSchema.validate(body, { abortEarly: false });
 };
 
-UserSchema.statics.createUser = async function ({ username, email, password }) {
+UserSchema.statics.validateRegistration = (body) => {
+  const registrationJoiSchema = loginJoiSchema.keys({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    repeatPassword: Joi.ref('password'),
+  });
+  return registrationJoiSchema.validate(body, { abortEarly: false });
+};
+
+UserSchema.statics.register = async function ({ username, email, password }) {
   const hashPassword = await bcrypt.hash(password, 10);
   const user = new this({ username, email, password: hashPassword });
-  const accessToken = getAccessToken({ id: user.id, username, email });
+  const accessToken = getUserAccessToken(user);
   const refreshToken = getRefreshToken();
 
   user.refreshToken.push(refreshToken);
 
   return { user, accessToken };
+};
+
+// * Methods
+UserSchema.methods.login = async function () {
+  const refreshToken = getRefreshToken();
+  const accessToken = getUserAccessToken(this);
+
+  this.refreshToken.push(refreshToken);
+  await this.save();
+
+  return { accessToken, refreshToken };
 };
 
 module.exports = mongoose.model('User', UserSchema);

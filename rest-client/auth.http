@@ -1,9 +1,36 @@
+### Register
 POST http://localhost:3000/register
 Content-Type: application/json
 
 {
 	"username": "guy",
-	"email": "guycohen86@gmail.com",
+	"email": "guycohen85@gmail.com",
 	"password": "12345678",
 	"repeatPassword": "12345678"
+}
+
+### Login
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+	"email": "guycohen85@gmail.com",
+	"password": "12345678"
+}
+
+### Logout
+POST http://localhost:3000/logout
+Content-Type: application/json
+
+{
+	"id": "636b4e53d7284b111d925bff"
+}
+
+### Refresh Token
+POST http://localhost:3000/refresh-token
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
+
+{
+	"id": "636bbcf6f1dbf1f0922a18df"
 }

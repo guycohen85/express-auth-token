@@ -10,7 +10,7 @@ module.exports = () => {
     await mongoose.connection.close();
   });
 
-  beforeEach(async () => {
-    await mongoose.connection.dropDatabase();
-  });
+  // beforeEach(async () => {
+  //   await mongoose.connection.dropDatabase();
+  // });
 };
