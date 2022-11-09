@@ -1,5 +1,5 @@
 ### Register
-POST http://localhost:3000/register
+POST http://localhost:3000/api/register
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### Login
-POST http://localhost:3000/login
+POST http://localhost:3000/api/login
 Content-Type: application/json
 
 {
@@ -19,15 +19,15 @@ Content-Type: application/json
 }
 
 ### Logout
-POST http://localhost:3000/logout
+POST http://localhost:3000/api/logout
 Content-Type: application/json
 
 {
-	"id": "636b4e53d7284b111d925bff"
+	"id": "636bbcf6f1dbf1f0922a18df"
 }
 
 ### Refresh Token
-POST http://localhost:3000/refresh-token
+POST http://localhost:3000/api/refresh-token
 Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
 

@@ -16,7 +16,7 @@ async function logoutController(req, res, next) {
   user.refreshToken = [];
   await user.save();
 
-  res.json();
+  res.end();
 }
 
 module.exports = logoutController;

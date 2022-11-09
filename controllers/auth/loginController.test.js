@@ -21,43 +21,43 @@ beforeEach(() => {
   };
 });
 
-describe('POST /login', () => {
-  const apiPath = '/login';
+describe('POST /api/login', () => {
+  const apiLogin = '/api/login';
 
   it('should return 400 if login validation failed', async () => {
     reqBody.email = 'Invalid email';
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiLogin).send(reqBody);
 
     expect(response.status).toBe(400);
   });
 
   it('should return 401 if user not exists', async () => {
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiLogin).send(reqBody);
 
     expect(response.status).toBe(401);
   });
 
   it('should return 401 if wrong password', async () => {
-    await User.create(userData);
+    const user = await User.create(userData);
     userData.password = 'wrong password';
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiLogin).send(reqBody);
 
     expect(response.status).toBe(401);
 
-    await User.deleteOne({ email: userData.email });
+    await user.remove();
   });
 
   it('should login', async () => {
     const hashPassword = await bcrypt.hash(userData.password, 10);
     userData.password = hashPassword;
 
-    await User.create(userData);
-    const response = await request(app).post(apiPath).send(reqBody);
+    const user = await User.create(userData);
+    const response = await request(app).post(apiLogin).send(reqBody);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('accessToken');
     expect(response.body).toHaveProperty('refreshToken');
 
-    await User.deleteOne({ email: userData.email });
+    await user.remove();
   });
 });

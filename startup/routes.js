@@ -1,9 +1,7 @@
-const indexRouter = require('../routes/index');
-// const usersRouter = require('../routes/users');
-const authRouter = require('../routes/auth');
+const apiRouter = require('../routes/api');
+const webRouter = require('../routes/web');
 
 module.exports = (app) => {
-  app.use('/', indexRouter);
-  // app.use('/users', usersRouter);
-  app.use('/', authRouter);
+  app.use('/api', apiRouter);
+  app.use('/', webRouter);
 };

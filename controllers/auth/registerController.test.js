@@ -15,37 +15,37 @@ beforeEach(() => {
   };
 });
 
-describe('POST /register', () => {
-  const apiPath = '/register';
+describe('POST /api/register', () => {
+  const apiRegister = '/api/register';
 
   it('should return 400 if registration validation failed', async () => {
     reqBody.email = 'Invalid email';
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiRegister).send(reqBody);
 
     expect(response.status).toBe(400);
   });
 
   it('should return 400 if user already exists', async () => {
-    await User.create(reqBody);
-    const response = await request(app).post(apiPath).send(reqBody);
+    const user = await User.create(reqBody);
+    const response = await request(app).post(apiRegister).send(reqBody);
 
     expect(response.status).toBe(400);
 
-    await User.deleteOne({ email: reqBody.email });
+    await user.remove();
   });
 
   it('should save a user to the database', async () => {
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiRegister).send(reqBody);
     const user = await User.findOne({ email: reqBody.email });
 
     expect(response.status).toBe(200);
     expect(user).not.toBeNull();
 
-    await User.deleteOne({ email: reqBody.email });
+    await user.remove();
   });
 
   it('should return 200 with user payload', async () => {
-    const response = await request(app).post(apiPath).send(reqBody);
+    const response = await request(app).post(apiRegister).send(reqBody);
 
     expect(response.status).toBe(200);
     expect(Object.keys(response.body).length).toBeTruthy();

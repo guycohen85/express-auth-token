@@ -15,8 +15,8 @@ beforeEach(() => {
   };
 });
 
-describe('POST /logout', () => {
-  const apiLogout = '/logout';
+describe('POST /api/logout', () => {
+  const apiLogout = '/api/logout';
 
   it('should return 400 if id is not a valid id', async () => {
     const user = await User.create(userData);

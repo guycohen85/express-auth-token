@@ -21,8 +21,8 @@ beforeEach(() => {
   };
 });
 
-describe('POST /refresh-token', () => {
-  const apiRefreshToken = '/refresh-token';
+describe('POST /api/refresh-token', () => {
+  const apiRefreshToken = '/api/refresh-token';
 
   it('should return 400 if refresh-token is not valid', async () => {
     reqBody.refreshToken = '123';
