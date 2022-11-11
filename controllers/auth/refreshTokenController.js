@@ -1,25 +1,29 @@
 const createError = require('http-errors');
-const jwt = require('jsonwebtoken');
-const config = require('config');
 const User = require('../../models/user');
-const { getUserAccessToken, getRefreshToken } = require('../../utils/tokens');
+const {
+  extractHeaderToken,
+  validateToken,
+  createUserAccessToken,
+  createRefreshToken,
+} = require('../../utils/tokens');
 
 async function refreshTokenController(req, res, next) {
-  const authHeader = req.header('Authorization');
-  if (!authHeader) {
-    return next(createError(400, 'No token provided'));
+  // Validate token
+  const [token, error] = extractHeaderToken(req);
+
+  if (error) {
+    return next(createError(400, error.message));
   }
 
-  const oldRefreshToken = authHeader.split(' ')[1];
+  const validationError = validateToken(token);
+  if (validationError) next(createError(400, validationError));
 
-  try {
-    jwt.verify(oldRefreshToken, config.get('jwtSecret'));
-  } catch (err) {
-    return next(createError(400, err));
-  }
-
+  // Find user
   const user = await User.findById(req.body.id);
-  const isTokenExists = user.refreshToken.includes(oldRefreshToken);
+  if (!user) return createError(400, 'User not exists');
+
+  // Validate token exists
+  const isTokenExists = user.refreshToken.includes(token);
 
   if (!isTokenExists) {
     user.refreshToken = [];
@@ -27,12 +31,14 @@ async function refreshTokenController(req, res, next) {
     return next(createError(400, 'Token is not valid'));
   }
 
-  const index = user.refreshToken.indexOf(oldRefreshToken);
-  const refreshToken = getRefreshToken();
+  // Create new refresh token
+  const index = user.refreshToken.indexOf(token);
+  const refreshToken = createRefreshToken();
+
   user.refreshToken[index] = refreshToken;
   await user.save();
 
-  const accessToken = getUserAccessToken(user);
+  const accessToken = createUserAccessToken(user);
 
   res.json({ accessToken, refreshToken });
 }

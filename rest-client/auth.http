@@ -34,3 +34,14 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxM
 {
 	"id": "636bbcf6f1dbf1f0922a18df"
 }
+
+### Protected - valid token
+GET http://localhost:3000/api/protected
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
+
+### Protected - invalid token
+GET http://localhost:3000/api/protected
+Authorization: bearer 123
+
+### Open
+GET http://localhost:3000/api/open
