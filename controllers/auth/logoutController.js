@@ -13,6 +13,8 @@ async function logoutController(req, res, next) {
   if (error) return next(createError(400, error));
 
   const user = await User.findById(id);
+  if (!user) return next(createError(400, 'User not exists'));
+
   user.refreshToken = [];
   await user.save();
 
