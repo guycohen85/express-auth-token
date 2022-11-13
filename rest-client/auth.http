@@ -1,5 +1,5 @@
 ### Register
-POST http://localhost:3000/api/register
+POST http://localhost:3001/api/register
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### Login
-POST http://localhost:3000/api/login
+POST http://localhost:3001/api/login
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Logout
-POST http://localhost:3000/api/logout
+POST http://localhost:3001/api/logout
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### Refresh Token
-POST http://localhost:3000/api/refresh-token
+POST http://localhost:3001/api/refresh-token
 Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
 
@@ -36,12 +36,12 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxM
 }
 
 ### Protected - valid token
-GET http://localhost:3000/api/protected
+GET http://localhost:3001/api/protected
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
 
 ### Protected - invalid token
-GET http://localhost:3000/api/protected
+GET http://localhost:3001/api/protected
 Authorization: bearer 123
 
 ### Open
-GET http://localhost:3000/api/open
+GET http://localhost:3001/api/open

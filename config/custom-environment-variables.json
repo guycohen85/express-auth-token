@@ -1,5 +1,5 @@
 {
 	"db": "ENGLISH_DB",
-	"port": "ENGLISH_PORT",
+	"port": "PORT",
 	"jwtSecret": "ENGLISH_JWT_SECRET"
 }
