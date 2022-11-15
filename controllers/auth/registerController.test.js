@@ -8,7 +8,8 @@ let reqBody = {};
 
 beforeEach(() => {
   reqBody = {
-    username: 'guy',
+    firstName: 'guy',
+    lastName: 'cohen',
     email: faker.internet.email(),
     password: '12345678',
     repeatPassword: '12345678',

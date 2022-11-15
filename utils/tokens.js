@@ -10,8 +10,8 @@ function createAccessToken(payload = {}) {
   });
 }
 
-function createUserAccessToken({ id, email, username }) {
-  return jwt.sign({ id, email, username }, config.get('jwtSecret'), {
+function createUserAccessToken({ id, email, firstName, lastName }) {
+  return jwt.sign({ id, email, firstName, lastName }, config.get('jwtSecret'), {
     expiresIn,
   });
 }

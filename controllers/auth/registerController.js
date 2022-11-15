@@ -19,7 +19,8 @@ async function registerController(req, res, next) {
 
   res.json({
     id: user.id,
-    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     refreshToken: user.refreshToken[0],
     accessToken,

@@ -6,7 +6,8 @@ let userData = {};
 
 beforeEach(() => {
   userData = {
-    username: 'guy',
+    firstName: 'guy',
+    lastName: 'cohen',
     email: faker.internet.email(),
     password: '12345678',
     refreshToken: ['refreshToken1'],

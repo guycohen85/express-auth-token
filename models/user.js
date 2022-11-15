@@ -6,7 +6,13 @@ const {
 } = require('../utils/tokens');
 
 const UserSchema = new mongoose.Schema({
-  username: {
+  firstName: {
+    type: String,
+    minlength: 2,
+    maxlength: 30,
+    required: true,
+  },
+  lastName: {
     type: String,
     minlength: 2,
     maxlength: 30,
@@ -41,15 +47,21 @@ UserSchema.statics.validateLogin = (body) => {
 
 UserSchema.statics.validateRegistration = (body) => {
   const registrationJoiSchema = loginJoiSchema.keys({
-    username: Joi.string().alphanum().min(3).max(30).required(),
+    firstName: Joi.string().alphanum().min(2).max(30).required(),
+    lastName: Joi.string().alphanum().min(2).max(30).required(),
     repeatPassword: Joi.ref('password'),
   });
   return registrationJoiSchema.validate(body, { abortEarly: false });
 };
 
-UserSchema.statics.register = async function ({ username, email, password }) {
+UserSchema.statics.register = async function ({
+  firstName,
+  lastName,
+  email,
+  password,
+}) {
   const hashPassword = await bcrypt.hash(password, 10);
-  const user = new this({ username, email, password: hashPassword });
+  const user = new this({ firstName, lastName, email, password: hashPassword });
   const accessToken = createUserAccessToken(user);
   const refreshToken = createRefreshToken();
 

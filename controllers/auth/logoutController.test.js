@@ -8,7 +8,8 @@ let userData = {};
 
 beforeEach(() => {
   userData = {
-    username: 'guy',
+    firstName: 'guy',
+    lastName: 'cohen',
     email: 'guycohen85@gmail.com',
     password: '12345678',
     refreshToken: ['12345678'],

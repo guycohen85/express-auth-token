@@ -25,7 +25,8 @@ async function loginController(req, res, next) {
 
   res.json({
     id: user.id,
-    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     refreshToken,
     accessToken,

@@ -3,7 +3,8 @@ POST http://localhost:3001/api/register
 Content-Type: application/json
 
 {
-	"username": "guy",
+	"firstName": "guy",
+	"lastName": "cohen",
 	"email": "guycohen85@gmail.com",
 	"password": "12345678",
 	"repeatPassword": "12345678"
@@ -23,7 +24,7 @@ POST http://localhost:3001/api/logout
 Content-Type: application/json
 
 {
-	"id": "636bbcf6f1dbf1f0922a18df"
+	"id": "6373e4f827e9049bc7ce18f9"
 }
 
 ### Refresh Token
@@ -32,7 +33,7 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
 
 {
-	"id": "636bbcf6f1dbf1f0922a18df"
+	"id": "6373e4f827e9049bc7ce18f9"
 }
 
 ### Protected - valid token

@@ -15,7 +15,8 @@ beforeEach(() => {
     password: '12345678',
   };
   userData = {
-    username: 'guy',
+    firstName: 'guy',
+    lastName: 'cohen',
     email,
     password: '12345678',
   };
