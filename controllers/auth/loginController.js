@@ -1,6 +1,7 @@
 const User = require('../../models/user');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
+const { setRefreshTokenCookie } = require('../../utils/cookies');
 
 async function loginController(req, res, next) {
   const {
@@ -22,6 +23,8 @@ async function loginController(req, res, next) {
     return next(createError(401, 'Invalid email or password'));
 
   const { accessToken, refreshToken } = await user.login();
+
+  setRefreshTokenCookie(res, refreshToken);
 
   res.json({
     id: user.id,

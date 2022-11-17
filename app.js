@@ -9,6 +9,9 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+if (process.env.NODE_ENV === 'development') {
+  require('./startup/cors')(app);
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

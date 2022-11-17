@@ -49,7 +49,6 @@ UserSchema.statics.validateRegistration = (body) => {
   const registrationJoiSchema = loginJoiSchema.keys({
     firstName: Joi.string().alphanum().min(2).max(30).required(),
     lastName: Joi.string().alphanum().min(2).max(30).required(),
-    repeatPassword: Joi.ref('password'),
   });
   return registrationJoiSchema.validate(body, { abortEarly: false });
 };
