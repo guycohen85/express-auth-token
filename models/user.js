@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const Joi = require('joi');
+
 const {
   createUserAccessToken,
   createRefreshToken,
@@ -60,11 +62,18 @@ UserSchema.statics.register = async function ({
   password,
 }) {
   const hashPassword = await bcrypt.hash(password, 10);
-  const user = new this({ firstName, lastName, email, password: hashPassword });
-  const accessToken = createUserAccessToken(user);
   const refreshToken = createRefreshToken();
+  const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-  user.refreshToken.push(refreshToken);
+  const user = new this({
+    firstName,
+    lastName,
+    email,
+    password: hashPassword,
+    refreshToken: [hashRefreshToken],
+  });
+
+  const accessToken = createUserAccessToken(user);
 
   return { user, accessToken };
 };
@@ -72,9 +81,10 @@ UserSchema.statics.register = async function ({
 // * Methods
 UserSchema.methods.login = async function () {
   const refreshToken = createRefreshToken();
+  const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
   const accessToken = createUserAccessToken(this);
 
-  this.refreshToken.push(refreshToken);
+  this.refreshToken.push(hashRefreshToken);
   await this.save();
 
   return { accessToken, refreshToken };

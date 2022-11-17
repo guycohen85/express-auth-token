@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const {
   extractHeaderToken,
@@ -23,19 +24,24 @@ async function refreshTokenController(req, res, next) {
   if (!user) return createError(400, 'User not exists');
 
   // Validate token exists
-  const isTokenExists = user.refreshToken.includes(token);
+  let hashToken;
+  for (userToken of user.refreshToken) {
+    hashToken = await bcrypt.compare(token, userToken);
+    if (hashToken) break;
+  }
 
-  if (!isTokenExists) {
+  if (!hashToken) {
     user.refreshToken = [];
     await user.save();
     return next(createError(400, 'Token is not valid'));
   }
 
   // Create new refresh token
-  const index = user.refreshToken.indexOf(token);
+  const index = user.refreshToken.indexOf(hashToken);
   const refreshToken = createRefreshToken();
+  const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-  user.refreshToken[index] = refreshToken;
+  user.refreshToken[index] = hashRefreshToken;
   await user.save();
 
   const accessToken = createUserAccessToken(user);

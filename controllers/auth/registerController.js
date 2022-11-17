@@ -1,6 +1,5 @@
 const User = require('../../models/user');
 const createError = require('http-errors');
-bcrypt = require('bcrypt');
 const { setRefreshTokenCookie } = require('../../utils/cookies');
 
 async function registerController(req, res, next) {

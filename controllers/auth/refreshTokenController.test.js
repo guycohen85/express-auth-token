@@ -4,6 +4,7 @@ require('../../utils/tests/dbConnection')();
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
 
 const token = jwt.sign({}, 'secret');
 let reqBody = {};
@@ -18,7 +19,7 @@ beforeEach(() => {
     lastName: 'cohen',
     email,
     password: '12345678',
-    refreshToken: token,
+    refreshToken: ['123'],
   };
 });
 
@@ -46,6 +47,9 @@ describe('POST /api/refresh-token', () => {
   });
 
   it('should return a new refresh-token and access-token', async () => {
+    const hashRefreshToken = await bcrypt.hash(token, 10);
+    userData.refreshToken = [hashRefreshToken];
+
     const user = await User.create(userData);
     const response = await request(app)
       .post(apiRefreshToken)
