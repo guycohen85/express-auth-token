@@ -16,8 +16,8 @@ function createUserAccessToken({ id, email, firstName, lastName }) {
   });
 }
 
-function createRefreshToken() {
-  return jwt.sign({}, config.get('jwtSecret'), {
+function createRefreshToken(id) {
+  return jwt.sign({ id }, config.get('jwtSecret'), {
     expiresIn: '7 days',
   });
 }
@@ -38,11 +38,15 @@ function extractHeaderToken(req) {
 }
 
 function validateToken(token) {
+  let value, error;
+
   try {
-    jwt.verify(token, config.get('jwtSecret'));
-  } catch (error) {
-    return error;
+    value = jwt.verify(token, config.get('jwtSecret'));
+  } catch (err) {
+    error = err;
   }
+
+  return [value, error];
 }
 
 module.exports = {

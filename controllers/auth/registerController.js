@@ -20,11 +20,12 @@ async function registerController(req, res, next) {
   setRefreshTokenCookie(res, user.refreshToken[0]);
 
   res.json({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    refreshToken: user.refreshToken[0],
+    user: {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    },
     accessToken,
   });
 }

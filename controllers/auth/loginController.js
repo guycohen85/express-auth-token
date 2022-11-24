@@ -27,11 +27,12 @@ async function loginController(req, res, next) {
   setRefreshTokenCookie(res, refreshToken);
 
   res.json({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    refreshToken,
+    user: {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    },
     accessToken,
   });
 }

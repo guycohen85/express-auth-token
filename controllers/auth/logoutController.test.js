@@ -3,6 +3,7 @@ const app = require('../../app');
 require('../../utils/tests/dbConnection')();
 const User = require('../../models/user');
 const { faker } = require('@faker-js/faker');
+const { createAccessToken } = require('../../utils/tokens');
 
 let userData = {};
 
@@ -21,7 +22,11 @@ describe('POST /api/logout', () => {
 
   it('should return 400 if id is not a valid id', async () => {
     const user = await User.create(userData);
-    const response = await request(app).post(apiLogout).send({ id: '1' });
+    const token = createAccessToken();
+    const response = await request(app)
+      .post(apiLogout)
+      .set('Authorization', `bearer ${token}`)
+      .send({ id: '1' });
 
     expect(response.status).toBe(400);
 
@@ -30,7 +35,11 @@ describe('POST /api/logout', () => {
 
   it('should logout', async () => {
     const { id } = await User.create(userData);
-    const response = await request(app).post(apiLogout).send({ id });
+    const token = createAccessToken();
+    const response = await request(app)
+      .post(apiLogout)
+      .set('Authorization', `bearer ${token}`)
+      .send({ id });
     const user = await User.findById(id);
 
     expect(response.status).toBe(200);

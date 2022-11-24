@@ -2,8 +2,10 @@ const User = require('../../models/user');
 const createError = require('http-errors');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
+const { deleteRefreshTokenCookie } = require('../../utils/cookies');
 
 async function logoutController(req, res, next) {
+  // TODO: extract all validations to util file
   const schema = Joi.object({ id: Joi.objectId() });
   const {
     error,
@@ -17,6 +19,8 @@ async function logoutController(req, res, next) {
 
   user.refreshToken = [];
   await user.save();
+
+  deleteRefreshTokenCookie(res);
 
   res.end();
 }

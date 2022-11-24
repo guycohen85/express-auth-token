@@ -15,12 +15,13 @@ Content-Type: application/json
 
 {
 	"email": "guycohen85@gmail.com",
-	"password": "12345678"
+	"password": "310120"
 }
 
 ### Logout
 POST http://localhost:3001/api/logout
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
 
 {
 	"id": "6373e4f827e9049bc7ce18f9"
@@ -37,7 +38,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxM
 
 ### Protected - valid token
 GET http://localhost:3001/api/protected
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzY4ZjQ2MDUzNTkyMzBlMzRiNGE2NyIsImVtYWlsIjoiZ3V5Y29oZW44NUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJndXkiLCJsYXN0TmFtZSI6ImNvaGVuIiwiaWF0IjoxNjY5MDQ4ODAxLCJleHAiOjE2NjkwNDk3MDF9.hDhQsrduxvbrmo_RzWIQfPsRpiwrhqQrOq2PlhNahaE
 
 ### Protected - invalid token
 GET http://localhost:3001/api/protected

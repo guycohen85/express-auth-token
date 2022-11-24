@@ -1,26 +1,38 @@
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const {
   extractHeaderToken,
   validateToken,
   createUserAccessToken,
   createRefreshToken,
 } = require('../../utils/tokens');
+const { setRefreshTokenCookie } = require('../../utils/cookies');
 
 async function refreshTokenController(req, res, next) {
   // Validate token
-  const [token, error] = extractHeaderToken(req);
+  const [token, headerError] = extractHeaderToken(req);
 
-  if (error) {
-    return next(createError(400, error.message));
+  if (headerError) {
+    return next(createError(400, headerError.message));
   }
 
-  const validationError = validateToken(token);
+  const [tokenValue, validationError] = validateToken(token);
   if (validationError) next(createError(400, validationError));
 
+  // Validate token user id
+  const schema = Joi.object({ id: Joi.objectId() });
+  const {
+    error,
+    value: { id },
+  } = schema.validate({ id: tokenValue.id });
+
+  if (error) return next(createError(400, error));
+
   // Find user
-  const user = await User.findById(req.body.id);
+  const user = await User.findById(tokenValue.id);
   if (!user) return createError(400, 'User not exists');
 
   // Validate token exists
@@ -38,7 +50,7 @@ async function refreshTokenController(req, res, next) {
 
   // Create new refresh token
   const index = user.refreshToken.indexOf(hashToken);
-  const refreshToken = createRefreshToken();
+  const refreshToken = createRefreshToken(user.id);
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
   user.refreshToken[index] = hashRefreshToken;
@@ -46,7 +58,9 @@ async function refreshTokenController(req, res, next) {
 
   const accessToken = createUserAccessToken(user);
 
-  res.json({ accessToken, refreshToken });
+  setRefreshTokenCookie(res, refreshToken);
+
+  res.json({ accessToken });
 }
 
 module.exports = refreshTokenController;

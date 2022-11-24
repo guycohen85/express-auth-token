@@ -8,4 +8,8 @@ function setRefreshTokenCookie(res, refreshToken) {
   });
 }
 
-module.exports = { setRefreshTokenCookie };
+function deleteRefreshTokenCookie(res) {
+  res.clearCookie('token');
+}
+
+module.exports = { setRefreshTokenCookie, deleteRefreshTokenCookie };

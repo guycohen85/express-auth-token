@@ -38,7 +38,9 @@ const UserSchema = new mongoose.Schema({
 });
 
 const loginJoiSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
   password: Joi.string().min(3).max(30).required(),
 });
 
@@ -62,16 +64,18 @@ UserSchema.statics.register = async function ({
   password,
 }) {
   const hashPassword = await bcrypt.hash(password, 10);
-  const refreshToken = createRefreshToken();
-  const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
   const user = new this({
     firstName,
     lastName,
     email,
     password: hashPassword,
-    refreshToken: [hashRefreshToken],
   });
+
+  const refreshToken = createRefreshToken(user.id);
+  const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
+
+  user.refreshToken = [hashRefreshToken];
 
   const accessToken = createUserAccessToken(user);
 
@@ -80,7 +84,7 @@ UserSchema.statics.register = async function ({
 
 // * Methods
 UserSchema.methods.login = async function () {
-  const refreshToken = createRefreshToken();
+  const refreshToken = createRefreshToken(this.id);
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
   const accessToken = createUserAccessToken(this);
 
