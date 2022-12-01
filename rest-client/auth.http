@@ -21,10 +21,10 @@ Content-Type: application/json
 ### Logout
 POST http://localhost:3001/api/logout
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzY4ZjQ2MDUzNTkyMzBlMzRiNGE2NyIsImVtYWlsIjoiZ3V5Y29oZW44NUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJndXkiLCJsYXN0TmFtZSI6ImNvaGVuIiwiaWF0IjoxNjY5ODQxMTAwLCJleHAiOjE2Njk4NTAxMDB9.tdZcn8g4pnCCEtq4BIfukPi4aK5rWc508-djaMaAEbI
 
 {
-	"id": "6373e4f827e9049bc7ce18f9"
+	"id": "63768f4605359230e34b4a67"
 }
 
 ### Refresh Token

@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const { setRefreshTokenCookie } = require('../../utils/cookies');
 
 async function registerController(req, res, next) {
-  const { error, value } = User.validateRegistration(req.body);
+  const { error, value } = User.validate(req.body);
 
   if (error) {
     return next(createError(400, error));
@@ -13,11 +13,11 @@ async function registerController(req, res, next) {
 
   if (userExist) return next(createError(400, 'user already exists'));
 
-  const { user, accessToken } = await User.register(value);
+  const { user, accessToken, refreshToken } = await User.register(value);
 
   await user.save();
 
-  setRefreshTokenCookie(res, user.refreshToken[0]);
+  setRefreshTokenCookie(res, refreshToken);
 
   res.json({
     user: {

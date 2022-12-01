@@ -3,15 +3,13 @@ const apiRouter = express.Router();
 const auth = require('../middleware/auth');
 
 const authRouter = require('./api/auth');
+const userRouter = require('./api/user');
 
 apiRouter.use('/', authRouter);
+apiRouter.use('/', auth, userRouter);
 
-apiRouter.get('/protected', auth, (req, res, next) => {
+apiRouter.post('/protected', auth, (req, res, next) => {
   res.json({ protected: 'protected' });
-});
-
-apiRouter.get('/open', (req, res, next) => {
-  res.json({ open: 'open' });
 });
 
 module.exports = apiRouter;

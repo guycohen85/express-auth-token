@@ -3,54 +3,60 @@ const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
+
 const {
-  extractHeaderToken,
   validateToken,
   createUserAccessToken,
   createRefreshToken,
 } = require('../../utils/tokens');
-const { setRefreshTokenCookie } = require('../../utils/cookies');
+const {
+  setRefreshTokenCookie,
+  deleteRefreshTokenCookie,
+} = require('../../utils/cookies');
 
 async function refreshTokenController(req, res, next) {
-  // Validate token
-  const [token, headerError] = extractHeaderToken(req);
+  const token = req.cookies['token'];
 
-  if (headerError) {
-    return next(createError(400, headerError.message));
+  if (!token) {
+    return next(createError(401, 'No token provided'));
   }
 
-  const [tokenValue, validationError] = validateToken(token);
-  if (validationError) next(createError(400, validationError));
+  const validationError = validateToken(token);
+  if (validationError) next(createError(401, validationError));
 
-  // Validate token user id
+  // Validate user id
   const schema = Joi.object({ id: Joi.objectId() });
   const {
     error,
     value: { id },
-  } = schema.validate({ id: tokenValue.id });
+  } = schema.validate({ id: req.body.id });
 
-  if (error) return next(createError(400, error));
+  if (error) return next(createError(401, error));
 
   // Find user
-  const user = await User.findById(tokenValue.id);
-  if (!user) return createError(400, 'User not exists');
+  const user = await User.findById(id);
+  if (!user) return createError(401, 'User not exists');
 
   // Validate token exists
   let hashToken;
   for (userToken of user.refreshToken) {
     hashToken = await bcrypt.compare(token, userToken);
-    if (hashToken) break;
+    if (hashToken) {
+      hashToken = userToken;
+      break;
+    }
   }
 
   if (!hashToken) {
+    deleteRefreshTokenCookie(res);
     user.refreshToken = [];
     await user.save();
-    return next(createError(400, 'Token is not valid'));
+    return next(createError(401, 'Token is not valid'));
   }
 
   // Create new refresh token
   const index = user.refreshToken.indexOf(hashToken);
-  const refreshToken = createRefreshToken(user.id);
+  const refreshToken = createRefreshToken();
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
   user.refreshToken[index] = hashRefreshToken;

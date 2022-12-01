@@ -49,12 +49,12 @@ UserSchema.statics.validateLogin = (body) => {
   return loginJoiSchema.validate(body, { abortEarly: false });
 };
 
-UserSchema.statics.validateRegistration = (body) => {
-  const registrationJoiSchema = loginJoiSchema.keys({
+UserSchema.statics.validate = (body) => {
+  const joiSchema = loginJoiSchema.keys({
     firstName: Joi.string().alphanum().min(2).max(30).required(),
     lastName: Joi.string().alphanum().min(2).max(30).required(),
   });
-  return registrationJoiSchema.validate(body, { abortEarly: false });
+  return joiSchema.validate(body, { abortEarly: false });
 };
 
 UserSchema.statics.register = async function ({
@@ -72,19 +72,19 @@ UserSchema.statics.register = async function ({
     password: hashPassword,
   });
 
-  const refreshToken = createRefreshToken(user.id);
+  const refreshToken = createRefreshToken();
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
   user.refreshToken = [hashRefreshToken];
 
   const accessToken = createUserAccessToken(user);
 
-  return { user, accessToken };
+  return { user, accessToken, refreshToken };
 };
 
 // * Methods
 UserSchema.methods.login = async function () {
-  const refreshToken = createRefreshToken(this.id);
+  const refreshToken = createRefreshToken();
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
   const accessToken = createUserAccessToken(this);
 

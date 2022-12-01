@@ -8,7 +8,7 @@ function auth(req, res, next) {
     return next(createError(401, error.message));
   }
 
-  const [value, errorValidation] = validateToken(token);
+  const errorValidation = validateToken(token);
 
   if (errorValidation) {
     return next(createError(401, errorValidation.message));

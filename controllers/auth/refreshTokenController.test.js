@@ -17,7 +17,7 @@ beforeEach(async () => {
   const email = faker.internet.email();
 
   reqBody = {
-    refreshToken: token,
+    id,
   };
   userData = {
     _id: id,
@@ -32,44 +32,47 @@ beforeEach(async () => {
 describe('POST /api/refresh-token', () => {
   const apiRefreshToken = '/api/refresh-token';
 
-  it('should return 400 if refresh-token is not valid', async () => {
+  it('should return 401 if refresh-token is not valid', async () => {
     reqBody.refreshToken = '123';
-    const response = await request(app).post(apiRefreshToken).send(reqBody);
+    const response = await request(app)
+      .post(apiRefreshToken)
+      .send(reqBody)
+      .set('Cookie', ['token=123']);
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
   });
 
-  it('should return 400 if refresh-token is valid and not exists in the database', async () => {
+  it('should return 401 if refresh-token is valid and not exists in the database', async () => {
     userData.refreshToken = [];
     const user = await User.create(userData);
     const response = await request(app)
       .post(apiRefreshToken)
-      .set('Authorization', `bearer ${token}`);
+      .send(reqBody)
+      .set('Cookie', [`token=${token}`]);
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
 
     await user.remove();
   });
 
-  it('should return 400 if refresh-token id is not mongoose valid id', async () => {
-    const token = jwt.sign({ id: '123' }, 'secret');
-
-    // userData.refreshToken = [];
-    // const user = await User.create(userData);
+  it('should return 401 if id is not mongoose valid id', async () => {
+    reqBody.id = '123';
     const response = await request(app)
       .post(apiRefreshToken)
-      .set('Authorization', `bearer ${token}`);
+      .send(reqBody)
+      .set('Cookie', [`token=${token}`]);
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
 
     // await user.remove();
   });
 
-  it('should return a new refresh-token and access-token', async () => {
+  it('should return a new access-token', async () => {
     const user = await User.create(userData);
     const response = await request(app)
       .post(apiRefreshToken)
-      .set('Authorization', `bearer ${token}`);
+      .send(reqBody)
+      .set('Cookie', [`token=${token}`]);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('accessToken');
