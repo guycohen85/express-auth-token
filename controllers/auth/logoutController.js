@@ -22,7 +22,7 @@ async function logoutController(req, res, next) {
 
   deleteRefreshTokenCookie(res);
 
-  res.end();
+  res.json({ id: user.id });
 }
 
 module.exports = logoutController;
