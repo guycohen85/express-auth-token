@@ -1,5 +1,5 @@
 const logger = require('../utils/logger');
-const { extractErrors } = require('../utils/joi');
+const { extractErrors } = require('../utils/joiError');
 
 module.exports = (app) => {
   app.use(async (err, req, res, next) => {

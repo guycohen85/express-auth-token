@@ -1,5 +1,5 @@
 {
-	"db": "ENGLISH_DB",
+	"db": "APP_DB",
 	"port": "PORT",
-	"jwtSecret": "ENGLISH_JWT_SECRET"
+	"jwtSecret": "JWT_SECRET"
 }

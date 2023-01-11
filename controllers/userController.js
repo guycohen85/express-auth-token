@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const User = require('../models/user');
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
+const { objectId, name } = require('../utils/joiValidations');
 const bcrypt = require('bcrypt');
 
 exports.findAll = async (req, res) => {
@@ -11,7 +11,7 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res, next) => {
   // TODO: extract all validations to util file
-  const schema = Joi.object({ id: Joi.objectId() });
+  const schema = Joi.object({ id: objectId });
   const {
     error,
     value: { id },
@@ -27,8 +27,6 @@ exports.findOne = async (req, res, next) => {
 
   res.json(user);
 };
-
-// Todo: https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/
 
 exports.create = async (req, res, next) => {
   const { error, value } = User.validate(req.body);
@@ -60,9 +58,9 @@ exports.create = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   //validate
   const schema = Joi.object({
-    id: Joi.objectId(),
-    firstName: Joi.string().alphanum().min(2).max(30).required(),
-    lastName: Joi.string().alphanum().min(2).max(30).required(),
+    id: objectId,
+    firstName: name,
+    lastName: name,
   });
 
   const { error, value } = schema.validate(req.body);
@@ -95,7 +93,7 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   //validate
   const schema = Joi.object({
-    id: Joi.objectId(),
+    id: objectId,
   });
 
   const { error, value } = schema.validate(req.body);
@@ -116,3 +114,5 @@ exports.delete = async (req, res, next) => {
 
   res.json({ id });
 };
+
+// Todo: https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/

@@ -1,12 +1,11 @@
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzY4ZjQ2MDUzNTkyMzBlMzRiNGE2NyIsImVtYWlsIjoiZ3V5Y29oZW44NUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJndXkiLCJsYXN0TmFtZSI6ImNvaGVuIiwiaWF0IjoxNjY5NjQ0NjM1LCJleHAiOjE2Njk2NTM2MzV9.82aSMVnXiygEhQm0IHC9fz-icMg7qm0Bf35CwOqD7bs
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzM0NDg1ODgsImV4cCI6MTY3NDA1MzM4OH0.k4-rHHhgsolE689fU-mOtfz5MBlTmYawfmXWBhD43uY
 ### Find All
 GET http://localhost:3001/api/user
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ### Find One
-GET http://localhost:3001/api/user/63768f4605359230e34b4a671
+GET http://localhost:3001/api/user/63becc87417557f3ed31bf9c
 Content-Type: application/json
 Authorization: Bearer {{token}}
