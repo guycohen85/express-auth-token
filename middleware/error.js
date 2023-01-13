@@ -10,7 +10,7 @@ module.exports = (app) => {
       error.stack = err.stack;
     }
 
-    // JOI errors
+    // Joi errors
     if (err.details) {
       error.details = extractErrors(err.details);
     }

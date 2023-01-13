@@ -80,7 +80,6 @@ describe('GET /api/user/:id', () => {
   });
 });
 
-// TODO: need to write more tests
 describe('POST /api/user', () => {
   const apiLogin = '/api/user';
 
