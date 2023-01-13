@@ -4,15 +4,8 @@ const User = require('../../models/user');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
-const {
-  validateToken,
-  createUserAccessToken,
-  createRefreshToken,
-} = require('../../utils/tokens');
-const {
-  setRefreshTokenCookie,
-  deleteRefreshTokenCookie,
-} = require('../../utils/cookies');
+const { validateToken, createUserAccessToken, createRefreshToken } = require('../../utils/tokens');
+const { setRefreshTokenCookie, deleteRefreshTokenCookie } = require('../../utils/cookies');
 
 async function refreshTokenController(req, res, next) {
   const token = req.cookies['token'];
@@ -21,15 +14,15 @@ async function refreshTokenController(req, res, next) {
     return next(createError(401, 'No token provided'));
   }
 
-  const validationError = validateToken(token);
-  if (validationError) next(createError(401, validationError));
+  const tokenData = validateToken(token);
+  if (tokenData instanceof Error) next(createError(401, tokenData));
 
   // Validate user id
   const schema = Joi.object({ id: Joi.objectId() });
   const {
     error,
     value: { id },
-  } = schema.validate({ id: req.body.id });
+  } = schema.validate({ id: tokenData.id });
 
   if (error) return next(createError(401, error));
 
@@ -56,7 +49,7 @@ async function refreshTokenController(req, res, next) {
 
   // Create new refresh token
   const index = user.refreshToken.indexOf(hashToken);
-  const refreshToken = createRefreshToken();
+  const refreshToken = createRefreshToken(user.id);
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
 
   user.refreshToken[index] = hashRefreshToken;

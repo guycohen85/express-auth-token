@@ -1,3 +1,5 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYmVjYzg3NDE3NTU3ZjNlZDMxYmY5YyIsImlhdCI6MTY3MzU2Mzc3NCwiZXhwIjoxNjc0MTY4NTc0fQ.TJajoilODWASM-2vzjNKJlShKixI2-_kavRfPcz3lI4
+
 ### Register
 POST http://localhost:3001/api/register
 Content-Type: application/json
@@ -27,18 +29,14 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzY4ZjQ2M
 	"id": "63768f4605359230e34b4a67"
 }
 
-### Refresh Token
+### Refresh Token -- Todo: add cookie token
 POST http://localhost:3001/api/refresh-token
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjgwMDUxMzEsImV4cCI6MTY2ODYwOTkzMX0.iH-OIYPKwl-Q3WImVEeBwuajwWx5TzED6Qa8vLOrSC0
-
-{
-	"id": "6373e4f827e9049bc7ce18f9"
-}
+Cookie: token={{token}};
 
 ### Protected - valid token
 GET http://localhost:3001/api/protected
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzY4ZjQ2MDUzNTkyMzBlMzRiNGE2NyIsImVtYWlsIjoiZ3V5Y29oZW44NUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJndXkiLCJsYXN0TmFtZSI6ImNvaGVuIiwiaWF0IjoxNjY5MDQ4ODAxLCJleHAiOjE2NjkwNDk3MDF9.hDhQsrduxvbrmo_RzWIQfPsRpiwrhqQrOq2PlhNahaE
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYmVjYzg3NDE3NTU3ZjNlZDMxYmY5YyIsImVtYWlsIjoiZ3V5Y29oZW44NUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJHdXkiLCJsYXN0TmFtZSI6IkNvaGVuIiwiaWF0IjoxNjczNTY1MzI5LCJleHAiOjE2NzM1NzQzMjl9.jl5YCLIBinlL3xm7ZaIyrixFHN0mDn3SWIpM4TVmk7s
 
 ### Protected - invalid token
 GET http://localhost:3001/api/protected

@@ -8,10 +8,10 @@ function auth(req, res, next) {
     return next(createError(401, error.message));
   }
 
-  const errorValidation = validateToken(token);
+  const tokenData = validateToken(token);
 
-  if (errorValidation) {
-    return next(createError(401, errorValidation.message));
+  if (tokenData instanceof Error) {
+    return next(createError(401, tokenData.message));
   }
 
   next();

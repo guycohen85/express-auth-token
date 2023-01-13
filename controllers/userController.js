@@ -10,7 +10,6 @@ exports.findAll = async (req, res) => {
 };
 
 exports.findOne = async (req, res, next) => {
-  // TODO: extract all validations to util file
   const schema = Joi.object({ id: objectId });
   const {
     error,
@@ -19,7 +18,7 @@ exports.findOne = async (req, res, next) => {
 
   if (error) return next(createError(400, error));
 
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).select('_id firstName lastName email');
 
   if (!user) {
     return next(createError(404, 'User not found'));
