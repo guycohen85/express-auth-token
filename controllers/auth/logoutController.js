@@ -3,10 +3,10 @@ const createError = require('http-errors');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { deleteRefreshTokenCookie } = require('../../utils/cookies');
+const { objectId } = require('../../utils/joiValidations');
 
 async function logoutController(req, res, next) {
-  // TODO: extract all validations to util file
-  const schema = Joi.object({ id: Joi.objectId() });
+  const schema = Joi.object({ id: objectId });
   const {
     error,
     value: { id },

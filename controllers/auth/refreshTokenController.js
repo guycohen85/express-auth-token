@@ -2,8 +2,7 @@ const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
-
+const { objectId } = require('../../utils/joiValidations');
 const { validateToken, createUserAccessToken, createRefreshToken } = require('../../utils/tokens');
 const { setRefreshTokenCookie, deleteRefreshTokenCookie } = require('../../utils/cookies');
 
@@ -18,7 +17,7 @@ async function refreshTokenController(req, res, next) {
   if (tokenData instanceof Error) next(createError(401, tokenData));
 
   // Validate user id
-  const schema = Joi.object({ id: Joi.objectId() });
+  const schema = Joi.object({ id: objectId });
   const {
     error,
     value: { id },
