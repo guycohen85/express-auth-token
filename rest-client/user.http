@@ -9,3 +9,13 @@ Authorization: Bearer {{token}}
 GET http://localhost:3001/api/user/63becc87417557f3ed31bf9c
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### Update
+PUT http://localhost:3001/api/user/63becc87417557f3ed31bf9c
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+	"firstName": "guy1112",
+	"lastName": "cohen"
+}

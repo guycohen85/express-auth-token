@@ -50,8 +50,8 @@ exports.create = async (req, res, next) => {
   });
 
   await user.save();
-
-  res.json({ id: user.id, firstName, lastName, email });
+  user;
+  res.json({ _id: user._id, firstName, lastName, email });
 };
 
 exports.update = async (req, res, next) => {
@@ -62,14 +62,14 @@ exports.update = async (req, res, next) => {
     lastName: name,
   });
 
-  const { error, value } = schema.validate(req.body);
+  const { error, value } = schema.validate({ ...req.body, id: req.params.id });
 
   if (error) return next(createError(400, error));
 
   //find user
   const { id, firstName, lastName } = value;
 
-  const user = await User.findById(id);
+  const user = await User.findById(id).select('_id firstName lastName email');
 
   if (!user) {
     return next(createError(404, 'User not found'));
@@ -81,12 +81,7 @@ exports.update = async (req, res, next) => {
 
   await user.save();
 
-  res.json({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-  });
+  res.json(user);
 };
 
 exports.delete = async (req, res, next) => {
@@ -111,7 +106,7 @@ exports.delete = async (req, res, next) => {
   //delete
   await user.remove();
 
-  res.json({ id });
+  res.json({ _id: id });
 };
 
 // Todo: https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/
