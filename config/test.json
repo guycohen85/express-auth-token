@@ -1,5 +1,5 @@
 {
-	"db": "mongodb://localhost:27017/english_test",
-	"port": "3002",
+	"db": "mongodb://localhost:27017/facility_schedule_test",
+	"port": "3001",
 	"jwtSecret": "secret"
 }

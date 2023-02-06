@@ -3,14 +3,13 @@ const createError = require('http-errors');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { deleteRefreshTokenCookie } = require('../../utils/cookies');
-const { objectId } = require('../../utils/joiValidations');
+const { validateObjectId } = require('../../validations/objectId');
 
 async function logoutController(req, res, next) {
-  const schema = Joi.object({ id: objectId });
   const {
     error,
     value: { id },
-  } = schema.validate({ id: req.body.id });
+  } = validateObjectId(req.body.id);
 
   if (error) return next(createError(400, error));
 

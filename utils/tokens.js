@@ -2,16 +2,10 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
-const expiresIn = '150m';
+const expiresIn = '1y';
 
 function createAccessToken(payload = {}) {
   return jwt.sign(payload, config.get('jwtSecret'), {
-    expiresIn,
-  });
-}
-
-function createUserAccessToken({ id, email, firstName, lastName }) {
-  return jwt.sign({ id, email, firstName, lastName }, config.get('jwtSecret'), {
     expiresIn,
   });
 }
@@ -38,17 +32,12 @@ function extractHeaderToken(req) {
 }
 
 function validateToken(token) {
-  try {
-    return jwt.verify(token, config.get('jwtSecret'));
-  } catch (error) {
-    return error;
-  }
+  return jwt.verify(token, config.get('jwtSecret'));
 }
 
 module.exports = {
   createAccessToken,
   createRefreshToken,
-  createUserAccessToken,
   extractHeaderToken,
   validateToken,
 };

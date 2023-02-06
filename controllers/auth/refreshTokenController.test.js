@@ -56,15 +56,12 @@ describe('POST /api/refresh-token', () => {
   });
 
   it('should return 401 if id is not mongoose valid id', async () => {
-    reqBody.id = '123';
+    token = jwt.sign({ id: '123' }, 'secret');
     const response = await request(app)
       .post(apiRefreshToken)
-      .send(reqBody)
       .set('Cookie', [`token=${token}`]);
 
     expect(response.status).toBe(401);
-
-    // await user.remove();
   });
 
   it('should return a new access-token', async () => {

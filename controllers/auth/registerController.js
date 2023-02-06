@@ -1,9 +1,10 @@
 const User = require('../../models/user');
 const createError = require('http-errors');
 const { setRefreshTokenCookie } = require('../../utils/cookies');
+const { validateRegister } = require('../../validations/user');
 
 async function registerController(req, res, next) {
-  const { error, value } = User.validate(req.body);
+  const { error, value } = validateRegister(req.body);
 
   if (error) {
     return next(createError(400, error));
@@ -20,12 +21,7 @@ async function registerController(req, res, next) {
   setRefreshTokenCookie(res, refreshToken);
 
   res.json({
-    user: {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    },
+    user: user.toObject(),
     accessToken,
   });
 }

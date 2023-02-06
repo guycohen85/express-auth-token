@@ -13,3 +13,5 @@ exports.email = Joi.string()
 exports.password = Joi.string().min(3).max(30).required();
 
 exports.name = Joi.string().alphanum().min(2).max(30).required();
+
+exports.roles = Joi.array().items(Joi.string().valid('admin', 'editor'));

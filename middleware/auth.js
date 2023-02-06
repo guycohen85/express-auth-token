@@ -8,13 +8,13 @@ function auth(req, res, next) {
     return next(createError(401, error.message));
   }
 
-  const tokenData = validateToken(token);
-
-  if (tokenData instanceof Error) {
-    return next(createError(401, tokenData.message));
+  try {
+    const tokenData = validateToken(token);
+    req.user = tokenData;
+    next();
+  } catch (error) {
+    return next(createError(401, error.message));
   }
-
-  next();
 }
 
 module.exports = auth;

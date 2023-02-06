@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
-
-const { createUserAccessToken, createRefreshToken } = require('../utils/tokens');
+const { createAccessToken, createRefreshToken } = require('../utils/tokens');
 
 const UserSchema = new mongoose.Schema({
   firstName: {
@@ -31,29 +30,11 @@ const UserSchema = new mongoose.Schema({
     maxlength: 1024,
     required: true,
   },
+  roles: [String],
   refreshToken: [String],
 });
 
-const loginJoiSchema = Joi.object({
-  email: Joi.string()
-    .email({ tlds: { allow: false } })
-    .required(),
-  password: Joi.string().min(3).max(30).required(),
-});
-
 // * Static Methods
-UserSchema.statics.validateLogin = (body) => {
-  return loginJoiSchema.validate(body, { abortEarly: false });
-};
-
-UserSchema.statics.validate = (body) => {
-  const joiSchema = loginJoiSchema.keys({
-    firstName: Joi.string().alphanum().min(2).max(30).required(),
-    lastName: Joi.string().alphanum().min(2).max(30).required(),
-  });
-  return joiSchema.validate(body, { abortEarly: false });
-};
-
 UserSchema.statics.register = async function ({ firstName, lastName, email, password }) {
   const hashPassword = await bcrypt.hash(password, 10);
 
@@ -69,7 +50,7 @@ UserSchema.statics.register = async function ({ firstName, lastName, email, pass
 
   user.refreshToken = [hashRefreshToken];
 
-  const accessToken = createUserAccessToken(user);
+  const accessToken = createAccessToken(user.toObject());
 
   return { user, accessToken, refreshToken };
 };
@@ -78,12 +59,21 @@ UserSchema.statics.register = async function ({ firstName, lastName, email, pass
 UserSchema.methods.login = async function () {
   const refreshToken = createRefreshToken(this.id);
   const hashRefreshToken = await bcrypt.hash(refreshToken, 10);
-  const accessToken = createUserAccessToken(this);
+  const accessToken = createAccessToken(this.toObject());
 
   this.refreshToken.push(hashRefreshToken);
   await this.save();
 
   return { accessToken, refreshToken };
+};
+
+// * Transforms
+if (!UserSchema.options.toObject) UserSchema.options.toObject = {};
+UserSchema.options.toObject.transform = function (doc, ret, options) {
+  delete ret.__v;
+  delete ret.password;
+  delete ret.refreshToken;
+  return ret;
 };
 
 module.exports = mongoose.model('User', UserSchema);

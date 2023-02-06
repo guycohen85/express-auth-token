@@ -1,8 +1,10 @@
 const createError = require('http-errors');
 const User = require('../models/user');
 const Joi = require('joi');
-const { objectId, name } = require('../utils/joiValidations');
 const bcrypt = require('bcrypt');
+const { validateObjectId } = require('../validations/objectId');
+const { validateCreateUser, validateUpdateUser } = require('../validations/user');
+const { isAdmin } = require('../utils/auth');
 
 exports.findAll = async (req, res) => {
   const users = await User.find();
@@ -10,25 +12,24 @@ exports.findAll = async (req, res) => {
 };
 
 exports.findOne = async (req, res, next) => {
-  const schema = Joi.object({ id: objectId });
   const {
     error,
     value: { id },
-  } = schema.validate({ id: req.params.id });
+  } = validateObjectId(req.params.id);
 
   if (error) return next(createError(400, error));
 
-  const user = await User.findById(req.params.id).select('_id firstName lastName email');
+  const user = await User.findById(id);
 
   if (!user) {
     return next(createError(404, 'User not found'));
   }
 
-  res.json(user);
+  res.json(user.toObject());
 };
 
 exports.create = async (req, res, next) => {
-  const { error, value } = User.validate(req.body);
+  const { error, value } = validateCreateUser(req.body);
 
   if (error) {
     return next(createError(400, error));
@@ -38,7 +39,7 @@ exports.create = async (req, res, next) => {
 
   if (userExist) return next(createError(400, 'user already exists'));
 
-  const { firstName, lastName, email, password } = value;
+  const { firstName, lastName, email, password, roles } = value;
 
   const hashPassword = await bcrypt.hash(password, 10);
 
@@ -47,50 +48,51 @@ exports.create = async (req, res, next) => {
     lastName,
     email,
     password: hashPassword,
+    roles,
   });
 
   await user.save();
-  user;
-  res.json({ _id: user._id, firstName, lastName, email });
+
+  res.json(user.toObject());
 };
 
 exports.update = async (req, res, next) => {
-  //validate
-  const schema = Joi.object({
-    id: objectId,
-    firstName: name,
-    lastName: name,
-  });
+  // if user.id !== req.params.id && !user.isAdmin() -> return error(only admin can update another user)
 
-  const { error, value } = schema.validate({ ...req.body, id: req.params.id });
+  //validate
+  const { error, value } = validateUpdateUser({ ...req.body, id: req.params.id });
 
   if (error) return next(createError(400, error));
 
   //find user
-  const { id, firstName, lastName } = value;
+  const { id, firstName, lastName, roles } = value;
 
-  const user = await User.findById(id).select('_id firstName lastName email');
+  const user = await User.findById(id);
 
   if (!user) {
     return next(createError(404, 'User not found'));
   }
 
   //update
+  if (roles !== undefined) {
+    if (isAdmin(req)) {
+      user.roles = roles;
+    } else {
+      return next(createError(403, 'Only admin user can set roles'));
+    }
+  }
+
   user.firstName = firstName;
   user.lastName = lastName;
 
   await user.save();
 
-  res.json(user);
+  res.json(user.toObject());
 };
 
 exports.delete = async (req, res, next) => {
   //validate
-  const schema = Joi.object({
-    id: objectId,
-  });
-
-  const { error, value } = schema.validate(req.body);
+  const { error, value } = validateObjectId(req.params.id);
 
   if (error) return next(createError(400, error));
 
@@ -108,5 +110,3 @@ exports.delete = async (req, res, next) => {
 
   res.json({ _id: id });
 };
-
-// Todo: https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/

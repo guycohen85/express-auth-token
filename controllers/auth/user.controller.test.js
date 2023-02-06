@@ -5,11 +5,11 @@ const User = require('../../models/user');
 const { faker } = require('@faker-js/faker');
 const { createAccessToken } = require('../../utils/tokens');
 
-const token = createAccessToken();
+const token = createAccessToken({ roles: ['admin'] });
 let usersData;
 const usersCount = 2;
 const mongoose = require('mongoose');
-const user = require('../../models/user');
+// const user = require('../../models/user');
 
 beforeEach(() => {
   usersData = [];
@@ -20,6 +20,9 @@ beforeEach(() => {
       email: faker.internet.email(),
       password: '12345678',
     });
+    if (i === 0) {
+      usersData[i].roles = ['admin'];
+    }
   }
 });
 
@@ -28,9 +31,7 @@ describe('GET /api/user', () => {
 
   it('should return users', async () => {
     const users = await User.insertMany(usersData);
-    const response = await request(app)
-      .get(apiUser)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get(apiUser).set('Authorization', `Bearer ${token}`);
 
     const filterUsers = response.body.filter(
       (user) => user._id === users[0].id || user._id === users[1].id
@@ -47,9 +48,7 @@ describe('GET /api/user/:id', () => {
   const apiLogin = '/api/user/123';
 
   it('should return 400 if id is not valid', async () => {
-    const response = await request(app)
-      .get(apiLogin)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get(apiLogin).set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(400);
   });
@@ -58,9 +57,7 @@ describe('GET /api/user/:id', () => {
     const id = mongoose.Types.ObjectId();
     const apiLogin = `/api/user/${id}`;
 
-    const response = await request(app)
-      .get(apiLogin)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get(apiLogin).set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
   });
@@ -69,9 +66,7 @@ describe('GET /api/user/:id', () => {
     const user = await User.create(usersData[0]);
     const apiLogin = `/api/user/${user.id}`;
 
-    const response = await request(app)
-      .get(apiLogin)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get(apiLogin).set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body._id).toBe(user.id);
@@ -88,10 +83,8 @@ describe('POST /api/user', () => {
       .post(apiLogin)
       .send(usersData[0])
       .set('Authorization', `Bearer ${token}`);
-
-    const user = await User.findById(response.body.id);
-    expect(user.id).toBeTruthy();
-
+    const user = await User.findById(response.body._id);
+    expect(user._id).toBeTruthy();
     await user.remove();
   });
 });
@@ -101,11 +94,11 @@ describe('PUT /api/user', () => {
 
   it('Should update a user', async () => {
     const user = await User.create(usersData[0]);
+    const token = createAccessToken(user.toObject());
 
     await request(app)
-      .put(apiLogin)
+      .put(`${apiLogin}/${user.id}`)
       .send({
-        id: user.id,
         firstName: 'guy',
         lastName: 'cohen',
       })
@@ -118,6 +111,30 @@ describe('PUT /api/user', () => {
 
     await updatedUser.remove();
   });
+
+  it('Should add admin role to a user', async () => {
+    const admin = await User.create(usersData[0]);
+    const adminToken = createAccessToken(admin.toObject());
+
+    const user = await User.create(usersData[1]);
+
+    const response = await request(app)
+      .put(`${apiLogin}/${user.id}`)
+      .send({
+        firstName: 'guy',
+        lastName: 'cohen',
+        roles: ['admin'],
+      })
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    const updatedUser = await User.findById(user.id);
+
+    expect(updatedUser.firstName).toBe('guy');
+    expect(updatedUser.lastName).toBe('cohen');
+
+    await admin.remove();
+    await updatedUser.remove();
+  });
 });
 
 describe('DELETE /api/user/:id', () => {
@@ -127,7 +144,7 @@ describe('DELETE /api/user/:id', () => {
     const user = await User.create(usersData[0]);
 
     await request(app)
-      .delete(apiLogin)
+      .delete(`${apiLogin}/${user.id}`)
       .send({
         id: user.id,
       })
