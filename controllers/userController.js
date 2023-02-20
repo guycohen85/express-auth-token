@@ -7,7 +7,7 @@ const { validateCreateUser, validateUpdateUser } = require('../validations/user'
 const { isAdmin } = require('../utils/auth');
 
 exports.findAll = async (req, res) => {
-  const users = await User.find();
+  const users = await User.find({}, '-password -refreshToken');
   res.json(users);
 };
 
