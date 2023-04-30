@@ -8,7 +8,7 @@ pipeline {
 
 			steps {
 				echo 'building the app...'
-				withCredentials([[usernamPassword(credentialsId: 'docker-credentials', passwordVariable: 'PASS', usernameVariable: 'USER' )]])
+				withCredentials([[usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'PASS', usernameVariable: 'USER' )]])
 				sh 'docker build -t guycohen85/app-from-jenkins:1.0 .'
 				sh "echo $PASS | docker login -u $USER --password-stdin"
 				sh 'docker push guycohen85/app-from-jenkins:1.0'
